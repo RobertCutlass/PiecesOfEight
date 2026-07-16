@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Pieces of Eight — discussing topics of interest through an economic lens.">
+<title>Pieces of Eight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F4EE; --panel:#EDE8DC; --ink:#33302A; --ink-soft:#6F685C;
+    --line:#DBD3C5; --accent:#A88C57; --rule:#6E5A2E; --maxw:1080px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);border-top:4px solid var(--rule);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  h1,h2,h3{font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;font-weight:600;letter-spacing:-0.005em;line-height:1.08;margin:0;}
+  p{margin:0 0 1rem;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+  .bar{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);}
+  .bar-inner{max-width:var(--maxw);margin:0 auto;padding:13px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+  .brand{display:inline-flex;align-items:center;text-decoration:none;}
+  .brand .logo{height:30px;width:auto;display:block;}
+  .brand-fallback{display:none;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.3rem;letter-spacing:0;color:var(--ink);}
+  .nav{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
+  .nav a{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;text-decoration:none;color:var(--ink-soft);padding-bottom:2px;border-bottom:1px solid transparent;transition:color .15s,border-color .15s;cursor:pointer;}
+  .nav a:hover{color:var(--ink);border-color:var(--accent);}
+
+  .intro{padding:clamp(48px,8vw,92px) 0 clamp(20px,4vw,36px);}
+  .intro h1{font-size:clamp(2.6rem,7vw,4.6rem);letter-spacing:-0.025em;}
+  .tagline{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clamp(1.25rem,2.6vw,1.7rem);line-height:1.35;color:var(--ink-soft);margin:1.1rem 0 0;max-width:42ch;}
+
+  .section{padding:clamp(30px,5vw,52px) 0;scroll-margin-top:80px;}
+  .section + .section{border-top:1px solid var(--line);}
+  .section-head{margin-bottom:clamp(20px,3vw,34px);}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 .7rem;}
+  .section-head h2{font-size:clamp(1.7rem,4vw,2.4rem);}
+
+  .posts{border-top:1px solid var(--line);}
+  .post{border-bottom:1px solid var(--line);}
+  .post-link{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:24px 6px;cursor:pointer;color:inherit;font:inherit;transition:background .18s;}
+  .post-link:hover{background:rgba(168,140,87,.08);}
+  .thumb{height:140px;background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb-ph{width:52px;height:52px;fill:none;stroke:var(--ink-soft);stroke-width:3;opacity:.7;}
+  .post-body{display:block;}
+  .post-title{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.7rem;letter-spacing:0;line-height:1.1;margin-bottom:8px;}
+  .post-dek{display:block;color:var(--ink-soft);font-size:.96rem;line-height:1.5;margin-bottom:14px;max-width:60ch;}
+  .read-more{display:block;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:9px;}
+  .read-more .arr{display:inline-block;transition:transform .18s;}
+  .post-link:hover .read-more .arr{transform:translateX(5px);}
+  .post-date{display:block;font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;color:var(--ink-soft);}
+  .book-link{grid-template-columns:120px 1fr;gap:26px;align-items:start;}
+  .book-cover{width:120px;aspect-ratio:2/3;background:var(--panel);border:1px solid var(--line);border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .book-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+  .book-cover .thumb-ph{width:38px;height:38px;}
+  .book-info{display:block;}
+  .book-title{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.55rem;line-height:1.12;margin-bottom:12px;}
+  .book-meta{display:block;margin-bottom:14px;}
+  .book-row{display:block;font-family:"IBM Plex Mono",monospace;font-size:.76rem;letter-spacing:.02em;color:var(--ink-soft);margin-bottom:5px;}
+  .book-row .lbl{display:inline-block;min-width:62px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;}
+
+  .site-footer{background:var(--accent);color:#fff;margin-top:clamp(48px,8vw,96px);}
+  .footer-inner{max-width:var(--maxw);margin:0 auto;padding:52px 28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px;}
+  .footer-brand{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.7rem;font-weight:600;letter-spacing:0;color:#fff;}
+  .footer-links{display:flex;flex-direction:column;gap:9px;}
+  .footer-links a{align-self:flex-start;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.12rem;font-weight:500;letter-spacing:0;text-transform:none;text-decoration:none;color:#fff;border-bottom:1px solid rgba(255,255,255,.55);padding-bottom:2px;transition:opacity .15s,border-color .15s;}
+  .footer-links a:hover{opacity:.8;border-color:#fff;}
+
+  .overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,5vh,64px) 18px;overflow:auto;background:rgba(44,40,33,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .26s ease;}
+  .overlay[hidden]{display:none;}
+  .overlay.open{opacity:1;}
+  .reader{position:relative;width:100%;max-width:720px;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:0 24px 60px rgba(44,40,33,.28);padding:clamp(28px,5vw,56px);transform:translateY(18px) scale(.99);opacity:0;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .3s ease;}
+  .overlay.open .reader{transform:none;opacity:1;}
+  .close-btn{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);font-size:1rem;cursor:pointer;line-height:1;transition:color .15s,border-color .15s;}
+  .close-btn:hover{color:var(--accent);border-color:var(--accent);}
+  .reader-meta{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px;}
+  .reader-title{font-size:clamp(1.9rem,4.5vw,2.7rem);letter-spacing:-0.02em;line-height:1.06;margin:0 0 14px;max-width:20ch;}
+  .reader-tags{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:22px;}
+  .reader-body p{font-family:"Source Serif 4",Georgia,serif;font-size:1.12rem;line-height:1.65;color:var(--ink);margin:0 0 1.35rem;}
+  .reader-body img{display:block;width:100%;height:auto;border-radius:4px;margin:0 0 1.6rem;}
+  .reader-body .img-credit{margin:-1.1rem 0 2rem;font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.03em;color:var(--accent);}
+  .reader-body .img-credit em{font-style:italic;}
+  .reader-body .img-credit a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(168,140,87,.5);}
+  .reader-body .img-credit a:hover{border-color:var(--accent);}
+  .mini{position:relative;width:100%;max-width:430px;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:0 24px 60px rgba(44,40,33,.28);padding:clamp(30px,5vw,44px);text-align:center;transform:translateY(18px) scale(.99);opacity:0;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .3s ease;}
+  .overlay.open .mini{transform:none;opacity:1;}
+  .mini-label{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 12px;}
+  .mini-addr{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.3rem,3.5vw,1.7rem);color:var(--ink);margin:0 0 22px;word-break:break-all;}
+  .mini-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .mini-btn{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--paper);border:0;border-radius:4px;padding:9px 14px;cursor:pointer;text-decoration:none;transition:background .15s;}
+  .mini-btn:hover{background:#211f1b;}
+  .mini-btn.alt{background:none;color:var(--ink);border:1px solid var(--line);}
+  .mini-btn.alt:hover{background:rgba(168,140,87,.08);border-color:var(--accent);}
+
+  @media (max-width:720px){ .post-link{grid-template-columns:1fr;gap:14px;} .thumb{height:190px;} }
+  @media (prefers-reduced-motion:reduce){ .overlay,.reader{transition:none;} .reader{transform:none;} html{scroll-behavior:auto;} }
+</style>
+</head>
+<body>
+
+  <header class="bar">
+    <div class="bar-inner">
+      <a class="brand" href="#top" aria-label="Home">
+        <img src="logo.png" alt="Pieces of Eight" class="logo" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+        <span class="brand-fallback">Pieces of Eight</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#articles">Articles</a>
+        <a href="#books">Books</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="intro" id="top">
+      <h1>Pieces of Eight</h1>
+      <p class="tagline">Discussing topics of interest through an economic lens.</p>
+    </section>
+
+    <!-- ============ ARTICLES ============ -->
+    <!-- To add one: copy a <article class="post"> block (unique data-slug), then copy a
+         matching hidden <article> in SOURCES with the same data-target / id.
+         For a real image, replace the <svg class="thumb-ph"> with <img src="your.jpg" alt=""> -->
+    <section class="section" id="articles">
+      <div class="section-head">
+        <p class="eyebrow">Writing</p>
+        <h2>Articles</h2>
+      </div>
+      <div class="posts">
+
+        <article class="post">
+          <button class="post-link" data-slug="war-premium" data-title="War Premium: The cost of war on UK Brewers" data-meta="Article · July 2026" data-tags="" data-target="src-article-2">
+            <span class="thumb"><img src="beer.jpg" alt="Brewery photographed in 1896-97"></span>
+            <span class="post-body">
+              <span class="post-title">War Premium: The cost of war on UK Brewers</span>
+              <span class="post-dek">The Black Sea closed and brewers caught both ends of the wrong stick — grain and energy at once. Grain came home; the energy bill became a subscription.</span>
+              <span class="read-more">Read more <span class="arr">&rarr;</span></span>
+              <span class="post-date">July 2026</span>
+            </span>
+          </button>
+        </article>
+
+        <article class="post">
+          <button class="post-link" data-slug="last-orders" data-title="Last Orders? An inquiry into the decline of UK Pubs" data-meta="Article · July 2026" data-tags="" data-target="src-article-1">
+            <span class="thumb"><img src="Morocco.jpg" alt="'The Pub' by Alberto Morrocco"></span>
+            <span class="post-body">
+              <span class="post-title">Last Orders? An inquiry into the decline of UK Pubs</span>
+              <span class="post-dek">Business rates, beer duty and the cost-of-living crisis get the blame — but the numbers on price, size, ownership and geography tell a more divided story.</span>
+              <span class="read-more">Read more <span class="arr">&rarr;</span></span>
+              <span class="post-date">July 2026</span>
+            </span>
+          </button>
+        </article>
+
+        <article class="post">
+          <button class="post-link" data-slug="article-three" data-title="Placeholder article three" data-meta="Placeholder · 2026" data-tags="Topic" data-target="src-article-3">
+            <span class="thumb"><svg class="thumb-ph" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="14" width="48" height="36" rx="3"/><circle cx="22" cy="27" r="4"/><path d="M14 47 L28 35 L37 44 L45 37 L50 47"/></svg></span>
+            <span class="post-body">
+              <span class="post-title">Placeholder article three</span>
+              <span class="post-dek">A short summary of this article goes here — swap it for your own.</span>
+              <span class="read-more">Read more <span class="arr">&rarr;</span></span>
+              <span class="post-date">Month 2026</span>
+            </span>
+          </button>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ============ BOOK RECOMMENDATIONS ============ -->
+    <section class="section" id="books">
+      <div class="section-head">
+        <p class="eyebrow">Reading</p>
+        <h2>Book Recommendations</h2>
+      </div>
+      <div class="posts">
+
+        <article class="post">
+          <button class="post-link book-link" data-slug="book-one" data-title="Placeholder book one" data-meta="Author name · 2025" data-tags="Genre" data-target="src-book-1">
+            <span class="book-cover"><svg class="thumb-ph" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="14" width="48" height="36" rx="3"/><circle cx="22" cy="27" r="4"/><path d="M14 47 L28 35 L37 44 L45 37 L50 47"/></svg></span>
+            <span class="book-info">
+              <span class="book-title">Placeholder book one</span>
+              <span class="book-meta">
+                <span class="book-row"><span class="lbl">Author</span>Author name</span>
+                <span class="book-row"><span class="lbl">Year</span>2025</span>
+                <span class="book-row"><span class="lbl">Genre</span>Placeholder</span>
+              </span>
+              <span class="read-more">Read the review <span class="arr">&rarr;</span></span>
+            </span>
+          </button>
+        </article>
+
+        <article class="post">
+          <button class="post-link book-link" data-slug="book-two" data-title="Placeholder book two" data-meta="Author name · 2025" data-tags="Genre" data-target="src-book-2">
+            <span class="book-cover"><svg class="thumb-ph" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="14" width="48" height="36" rx="3"/><circle cx="22" cy="27" r="4"/><path d="M14 47 L28 35 L37 44 L45 37 L50 47"/></svg></span>
+            <span class="book-info">
+              <span class="book-title">Placeholder book two</span>
+              <span class="book-meta">
+                <span class="book-row"><span class="lbl">Author</span>Author name</span>
+                <span class="book-row"><span class="lbl">Year</span>2025</span>
+                <span class="book-row"><span class="lbl">Genre</span>Placeholder</span>
+              </span>
+              <span class="read-more">Read the review <span class="arr">&rarr;</span></span>
+            </span>
+          </button>
+        </article>
+
+        <article class="post">
+          <button class="post-link book-link" data-slug="book-three" data-title="Placeholder book three" data-meta="Author name · 2025" data-tags="Genre" data-target="src-book-3">
+            <span class="book-cover"><svg class="thumb-ph" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="14" width="48" height="36" rx="3"/><circle cx="22" cy="27" r="4"/><path d="M14 47 L28 35 L37 44 L45 37 L50 47"/></svg></span>
+            <span class="book-info">
+              <span class="book-title">Placeholder book three</span>
+              <span class="book-meta">
+                <span class="book-row"><span class="lbl">Author</span>Author name</span>
+                <span class="book-row"><span class="lbl">Year</span>2025</span>
+                <span class="book-row"><span class="lbl">Genre</span>Placeholder</span>
+              </span>
+              <span class="read-more">Read the review <span class="arr">&rarr;</span></span>
+            </span>
+          </button>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">Pieces of Eight</div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="https://www.linkedin.com/in/jeremy-henderson-634995297/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" id="email-link">Email</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- ===== EMAIL POPUP ===== -->
+  <div class="overlay" id="email-overlay" hidden>
+    <div class="mini" role="dialog" aria-modal="true" aria-label="Email address">
+      <button class="close-btn" id="email-close" type="button" aria-label="Close">&times;</button>
+      <p class="mini-label">Email</p>
+      <p class="mini-addr" id="mini-addr">jeremyhamiltonhenderson@gmail.com</p>
+      <div class="mini-actions">
+        <button class="mini-btn" id="email-copy" type="button">Copy address</button>
+        <a class="mini-btn alt" href="mailto:jeremyhamiltonhenderson@gmail.com">Open in mail app</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== POPUP READER ===== -->
+  <div class="overlay" id="overlay" hidden>
+    <article class="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title">
+      <button class="close-btn" id="close-btn" type="button" aria-label="Close">&times;</button>
+      <p class="reader-meta" id="reader-meta"></p>
+      <h1 class="reader-title" id="reader-title"></h1>
+      <p class="reader-tags" id="reader-tags"></p>
+      <div class="reader-body" id="reader-body"></div>
+    </article>
+  </div>
+
+  <!-- ===== SOURCES (hidden full text — edit freely) ===== -->
+  <div hidden>
+    <article id="src-article-1">
+      <img src="Morocco.jpg" alt="'The Pub', a painting by Alberto Morrocco">
+      <div class="img-credit"><em>The Pub</em>, <a href="https://artuk.org/discover/artists/morrocco-alberto-19171998" target="_blank" rel="noopener">Alberto Morrocco (1917&ndash;1998)</a> &middot; <a href="https://artuk.org/visit/venues/city-art-centre-5085" target="_blank" rel="noopener">City Art Centre</a></div>
+      <p>"The government need to go a lot faster and further," Saqib Bhatti told MPs on June 17th, before naming the pubs of his constituency one by one. Some 161 of Britain's pubs shut in the first three months of this year, according to the British Beer and Pub Association. That MPs now eulogise them individually from the floor of Parliament is itself the story. Since 2000, pub numbers have been slowly falling across the UK. The usual suspects are easy to round up: business rates, national insurance, beer duty, energy bills. In 2026, the catchphrase for blame is cost-of-living and many publicans blame the cost-of-living crisis. But the worst year for closures was 2017.</p>
+      <img src="Decline.png" alt="Chart: UK pub numbers in decline since 2000">
+      <p>For many drinkers, the price of a pint is a crucial economic indicator to be tracked over the years. In 1987, the average was 93p; today it is close to £5. That is a fivefold rise, and it sounds like an outrage. It is also, on its own, close to meaningless. To understand why, we must familiarise ourselves with the distinction between nominal and real. A nominal measure is the price quoted in money on anything. It only tells you what is on the receipt and nothing more. A real measure asks a harder question, what did that money buy? Money is a snowball that melts. As inflation heats up year on year, the snowball in your hand shrinks and you suddenly cannot buy as much bread, petrol and beer as you once could.</p>
+      <p>To make the comparison honest, we pick one year and convert every price into the money of that year. This is called deflating, and the result is a real price. Observing draught lager prices from 2022 to 2024, the real price has risen suggesting pints becoming a dearer purchase relative to the wide basket of things people buy. Yet, affordability has barely shifted with the average earner losing 5 pints per week's pay.</p>
+      <img src="Affordability.png" alt="Chart: the real price of a pint and affordability over time">
+      <p>Frontier Economics' 2023 report on Pubs and Breweries found that 35% of consumers said they would eat and drink out less frequently next month (July 2023). Frontier's results are worth bearing in mind during this time when spending power has been increasingly squeezed by high inflation and interest rates suggesting discretionary spending on nights out is among the first things household trimmed from spending.</p>
+      <p>Frontier also notes that pubs largely absorbed rising costs before passing them on to pubgoers. Delaying price rises, trimming menus and shortening hours, absorbing higher costs in their already narrow profit margins. BrewDog's chief executive, James Watt puts it bluntly; if prices rose in line with the company's energy bills, a pint of Punk IPA would cost £27.50. His warning cautions the crippling combination of 'the worst cost inflation for decades and squeezed spending power'. The cost absorption BrewDog now faces is one that thousands of pubs have already been living with for years.</p>
+      <p>For the Pub and Brewery industry, there's a stark difference in impact of costs between small independent pubs like the ones pleaded for Mr Bhatti and large chains such as BrewDog. Frontier finds that small pubs feel it worst. Small pubs lack the cash reserves, hedging and buying power that let big chains survive bad years. There has been a divergence in pub growth by size, 9,400 small pubs have vanished while 3,100 large pubs have appeared (see divergence chart). The total -13% decline being the average of two opposite trends does not just reinforce the struggle of small pubs during the cost-of-living crisis but suggests a larger trend at hand predating COVID.</p>
+      <img src="Divergence.png" alt="Chart: divergence in pub numbers by size — small pubs falling, large pubs rising">
+      <p>But small is not the same as independent and it is in the size, not ownership, where rising costs bite. The last two decades (see ownership chart) show a clear growth of independents against a collapse in pub companies. What feels like the death of independents is closer to its opposite pre-COVID. Nonetheless, the post-COVID climate has put pressure on pubs of nearly every size (See employment band chart). The clear divergence that once was clear before the cost-of-living crisis has since been blurred as larger bands experience cost squeezes.</p>
+      <img src="Employment.png" alt="Chart: pubs by employment band">
+      <p>The struggle of pubs has been not defined by size only but also geography. Where a pub sits counts for a lot. Between 2019-2025, the sharpest falls were rural. Powys of Wales lost nearly a quarter of its pubs. The Highland and Pembrokeshire almost as many. Whereas urban areas such as Camden, Hackney and Trafford all added pubs. These, however, are outliers not evidence of an urban advantage as London has barely moved with winners and losers split between boroughs.</p>
+      <img src="Geography.png" alt="Chart: change in pub numbers by area, 2019 to 2025">
+      <p>Fundamentally, the sector still sustains some 1,040,000 jobs and returns around £18bn in tax revenue, despite closures. With £34.4bn in economic contributions, the industry holds a cherished place in the UK economic and social climate. The remaining question lies not only how many pubs will survive each year but what kind and how the Government will act on the pressures that publicans like Mr Bhatti have been warning of.</p>
+    </article>
+    <article id="src-article-2">
+      <img src="beer.jpg" alt="The brewery photographed in 1896-97">
+      <div class="img-credit">Photographed 1896&ndash;97. Founded 1872 by Mykola Khryakov, the Tallinn merchant Karl Weise, and Swedish merchants Gabriel and Friedrich J&ouml;nni.</div>
+      <p>Days into the Russo-Ukrainian war, employees at the Pravda brewery in Lviv switched from producing beer to molotovs, pushing petrol-soaked cloth into beer bottles labelled Putin Huylo. The label does not translate politely. By March 2022, they published their beer recipes free to breweries worldwide, asking brewers to donate proceeds. Hundreds did, naming it the "Victory Series". The invasion that turned beer bottles into molotovs also closed the ports of the world's third-largest barley exporter. Between them, Russia and Ukraine supplied roughly a quarter of the world's wheat exports. Almost all of Ukraine's grain left through the Black Sea. In February 2022, the Black Sea shut. For British brewers and pubs, thin-margin businesses that run on grain, gas and electricity, the war arrived far from Lviv, as an unwelcome line on a bill.</p>
+      <p>Brewers are simple machines that turn grain, gas and electricity into beer. Mashing the grain, boiling the wort, then chilling and storing what comes out takes roughly 30 to 40 kWh for every hectolitre. Gas is used for boiling the wort, the liquid extracted from mashing the grain, while electricity is spent chilling it. When the Black Sea closed, brewers caught both ends of the wrong stick, exposed to every input at once (See Chart below).</p>
+      <img src="Inputs.png" alt="Chart: UK commodity inputs versus energy inputs">
+      <p>Brewers' inputs were volatile in 2022. Grain more than doubled, standing 109% above its January 2021 level by April. Wholesale energy peaked in July. The bills took longer: what a pub actually paid went on climbing until late 2023. Today, bills remain roughly double their 2021 level. The combined arithmetic is dire. Brewers keep about 3 pence in the pound and pubs a little less. Frontier Economics' 2023 report on pubs and breweries put brewers' material costs up around 30% and their energy and water bills up 65%. Set against a 3% margin, this was not something brewers could absorb. But the two inputs did not behave alike during this time.</p>
+      <p>Britain is self-sufficient in barley. The country's malting industry is the third largest in the world, supplying fourteen of the twenty biggest brewers on earth. When the Black Sea closed, Colin Johnson of Crisp Malt, one of the country's leading independent maltsters, was calm about supply. &ldquo;Ukraine would not much trouble a country self-sufficient in barley&rdquo;, he said.</p>
+      <p>Johnson was correct about supply. Britain grew 7.4m tonnes of barley that season, 6% more than the year before, importing barely 1% of what it grew. Where the crisis would bite, he said, was forward pricing. Like most internationally traded goods, barley is not loyal, it follows wherever the price goes. When the world price rose, British barley followed and exports rose 47% that season. AHDB, the country's own agricultural board, puts it bluntly. UK prices "need to be elevated to prevent excess exports". There is also an important distinction between feed barley and malting barley. Brewers can only use malting barley because it must meet strict quality standards, crucial to the fermentation process.</p>
+      <img src="Barley.png" alt="Chart: malting barley and feed barley prices">
+      <p>Malting barley left the British farm gate at &pound;165.70 a tonne in January 2021 (See Malt and Barley graph). By the autumn of 2022 it was &pound;278.40. While feed barley recovered to pre-shock levels, the 2023 harvest was ample but poor. Bad weather created a scarcity of quality, not of grain. By 2024, the gap between the two stood at &pound;79 a tonne, where three years earlier it had been &pound;15. Today, grain prices have come home. The price of energy, however, has stayed high.</p>
+      <p>Casualties&rsquo; of 2022's energy shock have not been evenly spread. Pub insolvencies rose 76% in the first half of 2023, after two years in which government support had held them down. Small firms paid more per kilowatt-hour, hedged less, and held less cash (See Non-domestic electricity price chart). One reason a larger firm could bear an energy shock is its access to hedging programmes. Corporate hedging, the use of financial instruments to reduce the likely impact of a shock, is a tool associated with high fixed costs.</p>
+      <p>Even so, a lot of the difference came down to luck. Timing, magnitude and persistence of the impact on businesses varied with their different energy contracts. Energy is bought forward on contracts of fixed length signed on different dates. So the shock rolled through each pub and brewery through out 2022/23. Energy was, in Frontier's interviews, the industry's first complaint. Those caught without a contract saw prices rise by 130 to 140%. That was even with the state paying part of the bill.</p>
+      <img src="Electricity.png" alt="Chart: non-domestic electricity price comparisons by firm size">
+      <p>Brewers keep about 2.4% of everything they sell. That is not a margin that can absorb a 65% spike in energy and water costs, let alone 130 to 140%. In economics, pass-through is the share of a tax increase that shows up in the consumer price. Glen Weyl and Michal Fabinger have argued pass-through can be generalised to any cost, in any market. The UK&rsquo;s Beer Duty proves the point. It is charged to the brewer and, Frontier found, almost always passed onto the consumer. It does not much matter who the law charges.</p>
+      <p>What matters is who can least afford to absorb it. Other than the consumer, brewers mainly pass these costs down to pubs. Brewers and pubs have a symbiotic relationship. For small and mid-sized brewers, 80% of beer produced is sold in pubs. Holding such tight margins, brewers pass these costs through to pubs. Pubs can only do so much to cut costs, whether that means cutting opening hours or swapping in cheaper ingredients. When it comes to beer, there is no room for shrinkflation. Afterall, a pint is a pint, it can only get dearer.</p>
+      <p>Today, energy prices are no longer a war premium but a subscription for the UK economy. The Ukraine premium went. The structure stayed, and a new war now sits on top of it, the US/Iran conflict. This July, Ofgem raised the cap by 13%, to &pound;1,862, the highest since January 2024, blaming conflict in the Middle East. A British household now pays 57 pence a day for electricity and 29 for gas before it boils a kettle. Four years after the closure of the Black Sea, the explanation needed only a change of country. For brewers and pubs, this is no different, except that nobody caps their bills at all.</p>
+    </article>
+    <article id="src-article-3"><p>This is placeholder text for your third article. Replace it with your own words whenever you're ready.</p></article>
+    <article id="src-book-1"><p>This is a placeholder book review. Write what the book is about, what it does especially well, and the idea that stuck with you.</p><p>Then make the case: who should read it, and why it's worth their time.</p></article>
+    <article id="src-book-2"><p>This is a placeholder book review. Swap it for your own summary, verdict, and recommendation.</p></article>
+    <article id="src-book-3"><p>This is a placeholder book review. Swap it for your own summary, verdict, and recommendation.</p></article>
+  </div>
+
+  <script>
+    (function(){
+      var overlay = document.getElementById('overlay');
+      var reader  = overlay.querySelector('.reader');
+      var closeBtn = document.getElementById('close-btn');
+      var readerTitle = document.getElementById('reader-title');
+      var readerMeta  = document.getElementById('reader-meta');
+      var readerTags  = document.getElementById('reader-tags');
+      var readerBody  = document.getElementById('reader-body');
+      var links = document.querySelectorAll('.post-link');
+
+      // smooth-scroll nav without touching the URL hash (kept for article slugs)
+      var navLinks = document.querySelectorAll('.nav a[href^="#"]');
+      for(var n=0;n<navLinks.length;n++){
+        navLinks[n].addEventListener('click', function(e){
+          var t = document.getElementById(this.getAttribute('href').slice(1));
+          if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+        });
+      }
+
+      function findBySlug(slug){ for(var i=0;i<links.length;i++){ if(links[i].getAttribute('data-slug')===slug){ return links[i]; } } return null; }
+
+      function openArticle(btn, fromHistory){
+        var src = document.getElementById(btn.getAttribute('data-target'));
+        readerTitle.textContent = btn.dataset.title || '';
+        readerMeta.textContent  = btn.dataset.meta || '';
+        readerMeta.style.display = btn.dataset.meta ? '' : 'none';
+        readerTags.textContent  = btn.dataset.tags || '';
+        readerTags.style.display = btn.dataset.tags ? '' : 'none';
+        readerBody.innerHTML    = src ? src.innerHTML : '';
+        overlay.hidden = false;
+        reader.scrollTop = 0;
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){ overlay.classList.add('open'); }); });
+        closeBtn.focus();
+        if(!fromHistory){ history.pushState({a:btn.getAttribute('data-slug')}, '', '#' + btn.getAttribute('data-slug')); }
+      }
+      function closeArticle(fromHistory){
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+        var done = function(){ overlay.hidden = true; reader.removeEventListener('transitionend', done); };
+        reader.addEventListener('transitionend', done);
+        setTimeout(function(){ if(!overlay.hidden){ overlay.hidden = true; } }, 420);
+        if(!fromHistory){ history.replaceState({}, '', location.pathname + location.search); }
+      }
+
+      for(var i=0;i<links.length;i++){ (function(b){ b.addEventListener('click', function(){ openArticle(b, false); }); })(links[i]); }
+      closeBtn.addEventListener('click', function(){ closeArticle(false); });
+      overlay.addEventListener('click', function(e){ if(e.target === overlay){ closeArticle(false); } });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !overlay.hidden){ closeArticle(false); } });
+
+      window.addEventListener('popstate', function(){
+        var slug = (location.hash || '').replace(/^#/, '');
+        var btn = slug ? findBySlug(slug) : null;
+        if(btn){ if(overlay.hidden){ openArticle(btn, true); } }
+        else if(!overlay.hidden){ closeArticle(true); }
+      });
+      (function(){ var slug=(location.hash||'').replace(/^#/,''); var btn=slug?findBySlug(slug):null; if(btn){ openArticle(btn, true); } })();
+
+      // email popup
+      var emailOverlay = document.getElementById('email-overlay');
+      var emailLink = document.getElementById('email-link');
+      var emailClose = document.getElementById('email-close');
+      var emailCopy = document.getElementById('email-copy');
+      function openEmail(){ emailOverlay.hidden=false; document.body.style.overflow='hidden'; requestAnimationFrame(function(){ requestAnimationFrame(function(){ emailOverlay.classList.add('open'); }); }); }
+      function closeEmail(){ emailOverlay.classList.remove('open'); document.body.style.overflow=''; var d=function(){ emailOverlay.hidden=true; emailOverlay.removeEventListener('transitionend',d); }; emailOverlay.addEventListener('transitionend',d); setTimeout(function(){ if(!emailOverlay.hidden){ emailOverlay.hidden=true; } },420); }
+      if(emailLink){ emailLink.addEventListener('click', function(e){ e.preventDefault(); openEmail(); }); }
+      if(emailClose){ emailClose.addEventListener('click', closeEmail); }
+      emailOverlay.addEventListener('click', function(e){ if(e.target===emailOverlay){ closeEmail(); } });
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !emailOverlay.hidden){ closeEmail(); } });
+      if(emailCopy){ emailCopy.addEventListener('click', function(){ var a='jeremyhamiltonhenderson@gmail.com'; if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(a).then(function(){ emailCopy.textContent='Copied!'; setTimeout(function(){ emailCopy.textContent='Copy address'; },1500); }, function(){ emailCopy.textContent='Copied!'; }); } else { emailCopy.textContent='Copied!'; } }); }
+    })();
+  </script>
+
+</body>
+</html>
